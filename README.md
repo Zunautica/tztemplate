@@ -51,3 +51,7 @@ class @nameController extends @base {
 	}
 }
 ```
+
+===License
+
+Released under MIT License
