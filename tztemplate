@@ -111,5 +111,6 @@ ft.write(template)
 ft.close()
 if templateType == "view":
     ft = open(outdir+"/"+className+".php", "w")
+    ft.close()
 
-print template
+print "Successfully!\n\tcreated "+templateType+" class " + className +" from "+classExtends+" base"
