@@ -1,6 +1,6 @@
 # tztemplate
 
-Python script for generating templates from template files. Base template are provided in the .teadaze directory.
+Python script for generating Teadaze classes from template files. Base template are provided in the .teadaze directory.
 
 #### Configuration
 Three things are
