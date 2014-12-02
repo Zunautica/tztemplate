@@ -3,114 +3,141 @@
 import os
 import sys
 
-print "Teadaze Template Generator\n---\n"
+print "Teadaze Template Generator"
+print "--------------------------"
+print "Enter '?' to see options at each stage; control-c to exit"
 
 # directories
 if not os.environ.has_key('TZPATH'):
     print "Error: environement TZPATH does not exist\n\n\tTry 'export TZPATH=$HOME/path/to/teadaze'"
     exit()
-
 path = os.environ['TZPATH']
 templates = os.environ['HOME'] + "/.teadaze"
-
-# defaults
-templateType = classExtends = ""
-template = ""
 outdir = path
-
-
-
-# get class name (and template if specified)
-raw = raw_input("Class: ")
-if raw == "":
-    print "Nothing specified"
-    exit()
-
-# get class extension
-if raw.find(' ') > 0:
-    className, classExtends = raw.split(' ');
-else:
-    print "Error: No extension specified"
-    exit()
-
-# get type from the template annotation
 try:
-    ft = open(templates+"/"+classExtends+".tpl");
-except IOError:
-    print "Error:"
-    print "\tTemplate '"+classExtends+"' does not exist"
-    exit()
+    while True:
+        print "\n\nTZPATH=" + path
 
-template = ft.readline();
-if template[0] == "@":
-    templateType = template[1:-1]
-else:
-    print "Error:"
-    print "\tNo type annotation in template file"
-    print "\tTry adding @model | @view | @controller as the first line of the template "+classExtends+".tpl"
-    exit()
+        # defaults
+        templateType = classExtends = ""
+        template = ""
 
-if templateType != "model" and templateType != "view" and templateType != "controller" and templateType != "plugin":
-    print "Error:"
-    print "\tTemplate type '@"+templateType+"' unrecognised"
-    print "\tTry adding @model | @view | @controller as the first line of the template "+classExtends+".tpl"
-    exit()
+        # get class name (and template if specified)
+        raw = raw_input("\nClass: ")
+        if raw == "":
+            print "Nothing specified... quitting"
+            exit()
+        elif raw == "?":
+            tf = os.listdir(templates)
+            for template in tf:
+                sys.stdout.write( template.split('.')[0]+"  ")
+            continue;
 
-# set first level of directory
-if templateType == "view":
-    outdir += "/site/controllers"
-else:
-    outdir += "/site/"+templateType+"s"
+        # get class extension
+        if raw.find(' ') > 0:
+            className, classExtends = raw.split(' ');
+        else:
+            print "Error:"
+            print "\tNo extension specified"
+            print "\tUsage: {name} {extension}"
+            continue
 
+        # get type from the template annotation
+        try:
+            ft = open(templates+"/"+classExtends+".tpl");
+        except IOError:
+            print "Error:"
+            print "\tTemplate '"+classExtends+"' does not exist"
+            print "\tUsage: {name} {extension}"
+            continue
 
-if templateType == "controller" and os.path.isdir(outdir+"/"+className):
-    print "Error:"
-    print "\t"+templateType+" "+className+" already exists"
-    exit()
+        template = ft.readline();
+        if template[0] == "@":
+            templateType = template[1:-1]
+        else:
+            print "Error:"
+            print "\tNo type annotation in template file"
+            print "\tTry adding @model | @view | @controller as the first line of the template "+classExtends+".tpl"
+            continue
 
-if not classExtends:
-    classExtends = templateType.title();
+        if templateType != "model" and templateType != "view" and templateType != "controller" and templateType != "plugin":
+            print "Error:"
+            print "\tTemplate type '@"+templateType+"' unrecognised"
+            print "\tTry adding @model | @view | @controller as the first line of the template "+classExtends+".tpl"
+            continue
 
-# get package/controller if needed
-if templateType != "controller":
-    phrase = "Package: "
-    if templateType == "view":
-        phrase = "Controller: "
-    pkg = raw_input(phrase)
-    outdir += "/"+pkg
-else:
-    outdir += "/"+className;
-
-if templateType == "view":
-    if not os.path.isdir(outdir):
-        print "Error:"
-        print "\tSpecified Controller does not exist"
-        exit()
-
-    outdir += "/views"
-    if not os.path.isdir(outdir):
-        os.mkdir(outdir)
-else:
-    if not os.path.isdir(outdir):
-        os.mkdir(outdir)
-
-if os.path.isfile(outdir+"/"+className+templateType.title()+".php"):
-    print "Error:"
-    print "\t"+templateType.title() +" '"+className+"' already exists"
-    exit()
+        # set first level of directory
+        if templateType == "view":
+            outdir += "/site/controllers"
+        else:
+            outdir += "/site/"+templateType+"s"
 
 
-template = ft.read()
-ft.close()
+        if templateType == "controller" and os.path.isdir(outdir+"/"+className):
+            print "Error:"
+            print "\t"+templateType+" "+className+" already exists"
+            continue
 
-template = template.replace("@name", className)
-template = template.replace("@base", classExtends)
+        if not classExtends:
+            classExtends = templateType.title();
+        
+        # get package/controller if needed
+        if templateType != "controller":
+            phrase = "Package: "
+            pkg = ""
 
-ft = open(outdir+"/"+className+templateType.title()+".php", "w")
-ft.write(template)
-ft.close()
-if templateType == "view":
-    ft = open(outdir+"/"+className+".php", "w")
-    ft.close()
+            if templateType == "view":
+                phrase = "Controller: "
+            while True:
+                pkg = raw_input(phrase)
+                if pkg == "?":
+                    tf = os.listdir(outdir)
+                    for template in tf:
+                        sys.stdout.write( template+"  ")
+                    print "\n"
+                    continue
+                elif pkg == "":
+                    continue
+                else:
+                    break
 
-print "Successfully!\n\tcreated "+templateType+" class " + className +" from "+classExtends+" base"
+            outdir += "/"+pkg
+        else:
+            outdir += "/"+className;
+
+        if templateType == "view":
+            if not os.path.isdir(outdir):
+                print "Error:"
+                print "\tSpecified Controller does not exist"
+                continue
+
+            outdir += "/views"
+            if not os.path.isdir(outdir):
+                os.mkdir(outdir)
+        else:
+            if not os.path.isdir(outdir):
+                os.mkdir(outdir)
+
+        if os.path.isfile(outdir+"/"+className+templateType.title()+".php"):
+            print "Error:"
+            print "\t"+templateType.title() +" '"+className+"' already exists"
+            continue
+
+
+        template = ft.read()
+        ft.close()
+
+        template = template.replace("@name", className)
+        template = template.replace("@base", classExtends)
+
+        ft = open(outdir+"/"+className+templateType.title()+".php", "w")
+        ft.write(template)
+        ft.close()
+        if templateType == "view":
+            ft = open(outdir+"/"+className+".php", "w")
+            ft.close()
+
+        print "Successful!\n\tcreated "+templateType+" class " + className +" from "+classExtends+" base"
+except (KeyboardInterrupt):
+    print "\nQuitting...";
+    exit();
