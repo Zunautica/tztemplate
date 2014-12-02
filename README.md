@@ -6,7 +6,7 @@ Python script for generating Teadaze classes from template files. Base template 
 Three things are
 * The .teadaze directory to exist in $HOME
 * Environment variable $TZPATH to point to where teadaze is located
-** TZPATH=/path/to/teadaze just before calling the script to set it on the command line
+* TZPATH=/path/to/teadaze just before calling the script to set it on the command line
 * Any template files to exist in $HOME/.teadaze
 
 #### Usage
