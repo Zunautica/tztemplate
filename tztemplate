@@ -2,6 +2,7 @@
 
 import os
 import sys
+import re
 
 print "Teadaze Template Generator"
 print "--------------------------"
@@ -13,14 +14,13 @@ if not os.environ.has_key('TZPATH'):
     exit()
 path = os.environ['TZPATH']
 templates = os.environ['HOME'] + "/.teadaze"
-outdir = path
 try:
     while True:
         print "\n\nTZPATH=" + path
 
         # defaults
-        templateType = classExtends = ""
-        template = ""
+        template = templateType = classExtends = ""
+        outdir = path
 
         # get class name (and template if specified)
         raw = raw_input("\nClass: ")
@@ -129,6 +129,16 @@ try:
 
         template = template.replace("@name", className)
         template = template.replace("@base", classExtends)
+
+        r = re.compile('@([a-z]+)(?:\s|A-Z|\'|\"|\(|\{)')
+        matches = re.findall(r, template)
+        for exp in matches:
+            if exp == 'base' or exp == 'class' or exp == 'controller' or exp == 'plugin' or exp == 'model' or exp == 'view':
+                continue
+
+            value = raw_input(exp+": ")
+            template = template.replace("@"+exp, value)
+
 
         ft = open(outdir+"/"+className+templateType.title()+".php", "w")
         ft.write(template)
