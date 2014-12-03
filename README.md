@@ -29,12 +29,17 @@ Templates are named after the @base extension; if you are extending Controller t
 
 
 #### Syntax
-First line is always the template type annotation - @model, @view, @controller or @plugin:
-@model
+First line is always the template type annotation - @model, @view, @controller or @plugin
 
-Then the template which is normal PHP. However, there are two types of annotations:
-* @name - the class name
-* @base - the class that @name is extending
+Then the template which is normal PHP. However, there are two types of specific annotations:
+* `@name` - the class name
+* `@base` - the class that @name is extending
+
+After that you can define your own annotations for adding variables. for example:
+
+`@foo`
+
+will request you define 'foo' during the generation of the filea nd it will then substitute the value; this allows repeated templates to be defined to specific needs.
 
 Example for Controller.tpl:
 
@@ -45,6 +50,7 @@ Example for Controller.tpl:
 class @nameController extends @base {
 
 	public function init(array $target) {
+		$this->setVariable('@foo', '@bar');
 		
 	}
 
