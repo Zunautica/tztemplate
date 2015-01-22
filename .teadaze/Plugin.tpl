@@ -1,6 +1,6 @@
 @plugin
 <?php
-class @namePlugin extends @base
+class @namePlugin extends \Teadaze\@base
 {
 	public function run(&$sinker){
 		

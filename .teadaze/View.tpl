@@ -1,7 +1,7 @@
 @view
 <?php
 
-class @nameView extends @base {
+class @nameView extends \Teadaze\@base {
 
 	public function init() {
 

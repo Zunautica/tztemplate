@@ -4,3 +4,4 @@
 class @nameModel extends \Teadaze\@base {
 	
 }
+ 
